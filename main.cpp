@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
@@ -6,9 +7,9 @@
 #include <deque>
 
 HHOOK hKeyboardHook;
-KBDLLHOOKSTRUCT hooked_key; 
+KBDLLHOOKSTRUCT hooked_key;
 
-std::deque<hooked_key> keyBuffer;
+std::deque<KBDLLHOOKSTRUCT> keyBuffer;
 
 /*
 bufHandle is the meat of the program
@@ -29,7 +30,7 @@ void bufHandle() {
 	keyBuffer.push_back(hooked_key);
 	if (keyBuffer.size() > 10) {
 		float keyRate;
-		keyRate = (currentKey.time - keyBuffer.front().time) / keyBuffer.size();
+		keyRate = (hooked_key.time - keyBuffer.front().time) / keyBuffer.size();
 		if (keyRate < 35) {
 			printf("\n\nHigh Rate\n\n");
 		}
