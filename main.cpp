@@ -8,31 +8,25 @@
 HHOOK hKeyboardHook;
 KBDLLHOOKSTRUCT hooked_key; 
 
-struct keyStore {
-	DWORD scanCode;
-	DWORD vkCode;
-	DWORD flags;
-	DWORD time;
-	ULONG_PTR dwExtraInfo;
-	bool isStale;
-};
+std::deque<hooked_key> keyBuffer;
 
-keyStore currentKey;
-std::deque<keyStore> keyBuffer;
+/*
+bufHandle is the meat of the program
 
+There is then a short loop to search over the double-ended queue to find any keys older than 1 second and remove them
+
+The new key stroke is added to the end of the queue
+
+The key rate is then calculated, checked against a tolerance and then alert is produced if necessary.
+
+*/
 void bufHandle() {
 
-	currentKey.scanCode = hooked_key.scanCode;
-	currentKey.vkCode = hooked_key.scanCode;
-	currentKey.flags = hooked_key.flags;
-	currentKey.dwExtraInfo = hooked_key.dwExtraInfo;
-	currentKey.time = hooked_key.time;
-
-	while ((keyBuffer.size() > 1) && (keyBuffer.front().time < (currentKey.time - 1000))) {
+	while ((keyBuffer.size() > 1) && (keyBuffer.front().time < (hooked_key.time - 1000))) {
 		keyBuffer.pop_front();
 	}
 
-	keyBuffer.push_back(currentKey);
+	keyBuffer.push_back(hooked_key);
 	if (keyBuffer.size() > 10) {
 		float keyRate;
 		keyRate = (currentKey.time - keyBuffer.front().time) / keyBuffer.size();
@@ -42,6 +36,7 @@ void bufHandle() {
 	}
 }
 
+//Check the key and call the bufHandle
 LRESULT WINAPI Keylog(int nCode, WPARAM wParam, LPARAM lParam)
 {
 
@@ -53,6 +48,7 @@ LRESULT WINAPI Keylog(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(hKeyboardHook, nCode, wParam, lParam);
 }
 
+//Setup a hook to catch all keystrokes
 DWORD WINAPI Hooker(LPVOID lpParm)
 {
 	HINSTANCE hins;
@@ -71,6 +67,7 @@ DWORD WINAPI Hooker(LPVOID lpParm)
 	return 0;
 }
 
+//Call Hooker
 void main() {
 	Hooker(NULL);
 }
