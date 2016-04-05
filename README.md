@@ -7,7 +7,9 @@ As computers inherently trust humans, BadUSB emulates a Human Input Device (HID)
 
 The most common method of BadUSB is to emulate a keyboard and use it to automatically input keystrokes, particularly to type out and run a script (e.g. powershell).  This cannot be prevented without impacting human experience (i.e. denying legitimate inputs from keyboards) and the attack method is very accessible (RubberDucky is available cheaply from Hak5).
 
-This proof oc concept intercepts all keystrokes from any attached keyboards and checks the rate at which a person is typing.  Brief tests and statistics from wikipedia indicate that moderate-fast human type speed is 1 keystroke every 100 milliseconds.  
+Most attempts to prevent BadUSB uses VID and PID white listing to ensure only authorised devices.  This actuallyhas no affect at all on targeted BadUSB attacks as it is trivial to change the VID and PID of the USB to match the authorised keyboard.  I actually tested this with RubberDucky on a system using one of these products to prove the simplicity of it.  Needless to say the test was successful.
+
+This proof of concept intercepts all keystrokes from any attached keyboards and checks the rate at which a person is typing.  Brief tests and statistics from wikipedia indicate that moderate-fast human type speed is 1 keystroke every 100 milliseconds.  
 
 BadUSB is not limited by human type speed and can be as fast as the attacker likes.  The slower BadUSB types, the more noticeable it is to the unsuspecting user that plugged in the device, it is therefore in the attackers interest to make the keystrokes as quick as possible which then differentiates the behaviour from normal user activity.
 
