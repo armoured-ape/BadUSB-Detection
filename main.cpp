@@ -5,11 +5,32 @@
 #include <shlobj.h>
 #include <iostream>
 #include <deque>
+#using <system.dll>
+#using <mscorlib.dll>
+
+using namespace System;
+using namespace System::Diagnostics;
 
 HHOOK hKeyboardHook;
 KBDLLHOOKSTRUCT hooked_key;
 
 std::deque<KBDLLHOOKSTRUCT> keyBuffer;
+
+//Reporting
+void reporter() {
+	String ^sSource;
+	String ^sLog;
+	String ^sEvent;
+
+	sSource = gcnew String("BadUSB-Detector");
+	sLog = gcnew String("Application");
+	sEvent = gcnew String("A keyboard has been detected entering keystrokes faster than expected.  This may be an attempt to use BadUSB.");
+
+	if (!EventLog::SourceExists(sSource))
+		EventLog::CreateEventSource(sSource, sLog);
+
+	EventLog::WriteEntry(sSource, sEvent, EventLogEntryType::Warning, 1066);
+}
 
 /*
 bufHandle is the meat of the program
@@ -32,7 +53,8 @@ void bufHandle() {
 		float keyRate;
 		keyRate = (hooked_key.time - keyBuffer.front().time) / keyBuffer.size();
 		if (keyRate < 35) {
-			printf("\n\nHigh Rate\n\n");
+			//printf("\n\nHigh Rate\n\n");
+			reporter();
 		}
 	}
 }
