@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 	else if (argc < 2) {
 		printf("Initialising with default keyrate (35ms)\n");
 		rate = 35;
-		Hooker(NULL)
+		Hooker(NULL);
 	}
 	else {
 		rate = atoi(argv[1]);
