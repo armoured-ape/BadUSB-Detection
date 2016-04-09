@@ -21,7 +21,5 @@ There is a flaw in this method of detection in that a user sitting on the keyboa
 
 Future development
 ----------------------------------------------
-- get the alert printed to event log (much better)
 - setup up some sort of autostart/install mechanism
-- make the keystroke rate a variable so users can customise
 - check the key strokes are realtively unique (overcome bum->keyboard issues)
