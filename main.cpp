@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include "stdafx.h"
 #include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
@@ -15,6 +15,7 @@ HHOOK hKeyboardHook;
 KBDLLHOOKSTRUCT hooked_key;
 
 std::deque<KBDLLHOOKSTRUCT> keyBuffer;
+int rate;
 
 //Reporting
 void reporter() {
@@ -52,7 +53,7 @@ void bufHandle() {
 	if (keyBuffer.size() > 10) {
 		float keyRate;
 		keyRate = (hooked_key.time - keyBuffer.front().time) / keyBuffer.size();
-		if (keyRate < 35) {
+		if (keyRate < rate) {
 			//printf("\n\nHigh Rate\n\n");
 			reporter();
 		}
@@ -91,6 +92,19 @@ DWORD WINAPI Hooker(LPVOID lpParm)
 }
 
 //Call Hooker
-void main() {
-	Hooker(NULL);
+int main(int argc, char *argv[]) {
+	if (argc > 2) {
+		printf("Initialisation Error: Too many commandline arguements.\n");
+		printf("USAGE: BadUSB-Detector.exe <rate-limit>\n");
+			return -1;
+	}
+	else if (argc < 2) {
+		printf("Initialising with default keyrate (35ms)\n");
+		rate = 35;
+		Hooker(NULL)
+	}
+	else {
+		rate = atoi(argv[1]);
+		Hooker(NULL);
+	}
 }
